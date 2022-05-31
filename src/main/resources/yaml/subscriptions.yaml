@@ -1,0 +1,3433 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is the Subscriptions API that has the calls to obtain and
+    modify the recurrent payments. In addition, notifications handling.
+  title: Subscriptions API
+  version: 1.0.0
+basePath: /crm/subscriptions
+schemes:
+  - https
+paths:
+  /recurring-payments:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 2
+        - description: Specific the number of elements per page (paging)
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 10
+        - description: Field that we want to sort.
+          in: query
+          name: sort
+          required: false
+          type: string
+          x-example: transaction.postDate
+        - description: Direction we want to sort.
+          in: query
+          name: dir
+          required: false
+          type: string
+          x-example: DESC
+        - description: >-
+            Name of the plan selected by the user. The plan is related with the
+            branch.
+          in: query
+          name: planName
+          required: false
+          type: string
+          x-example: Apple Music Student
+        - description: The type associated to the recurring payment.
+          in: query
+          name: type
+          required: false
+          type: string
+          x-example: SUBSCRIPTION
+        - description: Initial start time since we want to filter.
+          format: date
+          in: query
+          name: startTimeFrom
+          required: false
+          type: string
+          x-example: '2020-01-03'
+        - description: Last start time that we want to filter.
+          format: date
+          in: query
+          name: startTimeTo
+          required: false
+          type: string
+          x-example: '2020-03-15'
+        - description: If the recurring payment have to be done again or not.
+          in: query
+          name: active
+          required: false
+          type: boolean
+          x-example: false
+        - description: 'Name of the brand that we want to sort. Max length : 255 characters.'
+          in: query
+          name: brand_name
+          required: false
+          type: string
+          x-example: APPLE
+        - description: If the user have enabled a special configuration for the brand.
+          in: query
+          name: enabled
+          required: false
+          type: boolean
+          x-example: false
+        - description: 'Id associated to an account. Length : 36 characters.'
+          in: query
+          name: accountId
+          required: false
+          type: string
+          x-example: c31dc51d-6468-4113-b538-1e8e3ec22d11
+        - description: 'Id associated to a card. Length : 36 characters.'
+          in: query
+          name: cardId
+          required: false
+          type: string
+          x-example: a82c614e-f150-40c3-b274-a04b0580e183
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/ResponsePaginatedMaskedRecPayment2'
+      tags:
+        - Recurring Payment
+      description: >-
+        Gets a paginated list of recurring payment entities, with possible
+        filtering.
+      operationId: getRecurringPayments
+      summary: >-
+        Gets a paginated list of recurring payment entities, with possible
+        filtering.
+    patch:
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/_PatchRecurringPaymentsConfigRequest'
+      responses:
+        '204':
+          description: The process finished correctly.
+        '403':
+          description: One of the recurring payments is not associated with your user id.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Forbidden.
+              errorName: FORBIDDEN
+              internalCode: '403'
+              shortMessage: FORBIDDEN
+              status: '403'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        404:
+          description: One the recurring payment does not exist.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'Recurring payment with id : X not found.'
+              errorName: NOT_FOUND_RECURRING_PAYMENT
+              internalCode: 404RP
+              shortMessage: NOT_FOUND_RECURRING_PAYMENT.
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: >-
+        Updates the subscription list to set whether they're active or not store
+        notes and the feedback of the user.
+      operationId: updateSubscription
+      summary: Updates the subscription list.
+  /recurring-payments/accounts:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 2
+        - description: Specify the number of elements per page (paging).
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 10
+        - description: Field that we want to sort.
+          in: query
+          name: sort
+          required: false
+          type: string
+          x-example: transaction.postDate
+        - description: Direction we want to sort.
+          in: query
+          name: dir
+          required: false
+          type: string
+          x-example: DESC
+        - description: Show only elements that have enabled recurring payments.
+          in: query
+          name: forceHasRecurringPaymentsEnabled
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_ResponsePaginatedMaskedAccount2'
+      tags:
+        - Recurring Payment
+      description: Returns a list of accounts for a user.
+      operationId: getAccounts
+      summary: Returns a list of accounts for a user.
+  /recurring-payments/brand-expenses:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: 'Id associated to an account. Length : 36 characters.'
+          in: query
+          name: accountId
+          required: false
+          type: string
+          x-example: c31dc51d-6468-4113-b538-1e8e3ec22d11
+        - description: 'Id associated to a card. Length : 36 characters.'
+          in: query
+          name: cardId
+          required: false
+          type: string
+          x-example: a82c614e-f150-40c3-b274-a04b0580e183
+        - description: 'Name of the brand that we want to sort. Max length : 255 characters.'
+          in: query
+          name: brand_name
+          required: false
+          type: string
+          x-example: Apple
+        - description: >-
+            Control if the user have enabled a special configuration for the
+            brand.
+          in: query
+          name: enabled
+          required: false
+          type: boolean
+          x-example: false
+        - description: If the recurring payment have to be done again or not.
+          in: query
+          name: active
+          required: false
+          type: boolean
+          x-example: false
+        - description: The type associated to the recurring payment.
+          in: query
+          name: recurringPaymentType
+          required: false
+          type: string
+          x-example: SUBSCRIPTION
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 2
+        - description: Specify the number of elements per page (paging).
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 10
+        - description: Field that we want to sort.
+          in: query
+          name: sort
+          required: false
+          type: string
+          x-example: transaction.postDate
+        - description: Direction we want to sort.
+          in: query
+          name: dir
+          required: false
+          type: string
+          x-example: DESC
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_ResponsePaginatedBrandExpenses'
+        404:
+          description: The given account does not exist.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Account X not found.
+              errorName: NOT_FOUND_ACCOUNT
+              internalCode: 404A
+              shortMessage: NOT_FOUND_ACCOUNT
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        490:
+          description: The given does not exist.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Card X not found.
+              errorName: NOT_FOUND_CARD
+              internalCode: 404CARD
+              shortMessage: NOT_FOUND_CARD
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: >-
+        Calculates and returns a paginated list of brands with payment details
+        associated to them. Requires either a card id or an account id to
+        perform the operation.
+      operationId: getBrandExpenses
+      summary: >-
+        Calculates and returns a paginated list of brands with payment details
+        associated to them.
+  /recurring-payments/cards:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 2
+        - description: Specify the number of elements per page (paging).
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 10
+        - description: Field that we want to sort.
+          in: query
+          name: sort
+          required: false
+          type: string
+          x-example: transaction.postDate
+        - description: Direction we want to sort.
+          in: query
+          name: dir
+          required: false
+          type: string
+          x-example: DESC
+        - description: Show only elements that have enabled recurring payments.
+          in: query
+          name: forceHasRecurringPaymentsEnabled
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_ResponsePaginatedMaskedCard2'
+      tags:
+        - Recurring Payment
+      description: Returns a list of cards for a user.
+      operationId: getCards
+      summary: Returns a list of cards for a user.
+  /recurring-payments/evolution:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Initial date since we want to filter.
+          in: query
+          name: dateFrom
+          required: true
+          type: string
+          x-example: '2020-01-03'
+        - description: Last date that we want to filter.
+          in: query
+          name: dateTo
+          required: true
+          type: string
+          x-example: '2020-03-15'
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_EvolutionResponse'
+        '400':
+          description: Invalid date range.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Invalid value for one of the data given.
+              errorName: BAD_REQUEST
+              internalCode: '400'
+              shortMessage: BAD_REQUEST
+              status: '400'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: >-
+        Returns the data needed to show the evolution chart, grouped by
+        categories, related to the given user id.
+      operationId: getEvolution
+      summary: Returns the data needed to show the evolution chart.
+  /recurring-payments/transactions:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 2
+        - description: Specify the number of elements per page (paging).
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 10
+        - description: Initial date since we want to filter.
+          in: query
+          name: dateFrom
+          required: false
+          type: string
+          x-example: '2020-01-03'
+        - description: Last date that we want to filter.
+          in: query
+          name: dateTo
+          required: false
+          type: string
+          x-example: '2020-03-15'
+        - description: 'Id associated to a recurring payment. Length : 36 characters.'
+          in: query
+          name: recurringPaymentId
+          required: false
+          type: string
+          x-example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+        - description: If it is an intuition of the system of future payments.
+          in: query
+          name: predicted
+          required: false
+          type: boolean
+          x-example: false
+        - description: 'Id associated to a card. Length : 36 characters.'
+          in: query
+          name: cardId
+          required: false
+          type: string
+          x-example: a82c614e-f150-40c3-b274-a04b0580e183
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_ResponsePaginatedMaskedTransaction2'
+      tags:
+        - Recurring Payment
+      description: >-
+        Returns a paginated list of transaction entities with possible filtering
+        by various parameters.
+      operationId: getTransactions
+      summary: Returns a paginated list of transaction entities.
+  /recurring-payments/user-brands:
+    patch:
+      consumes: []
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/_PatchUserBrandRequest'
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_PatchUserBrandsResponse'
+        491:
+          description: 'The user do not have a relation with the given brand name. '
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'UserBrand with user id : X and brand name : Y not found.'
+              errorName: NOT_FOUND_USER_BRAND
+              internalCode: 404UM
+              shortMessage: NOT_FOUND_USER_BRAND
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: Updates a list of user-brands.
+      operationId: updateUserBrands
+      summary: Updates a list of user-brands.
+  /recurring-payments/user-brands/{brand_name}:
+    patch:
+      consumes: []
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: 'Name of the brand that we want to sort. Max length : 255 characters.'
+          in: path
+          name: brand_name
+          required: true
+          type: string
+          x-example: Apple
+        - description: >-
+            If the payment method in the recurring payments is ignored for the
+            aggregation process
+          in: query
+          name: isUserRp
+          required: false
+          type: boolean
+          x-example: false
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/_PatchUserBrandItem'
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_PatchUserBrandsResponse'
+        491:
+          description: 'The user do not have a relation with the given brand name. '
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'UserBrand with user id : X and brand name : Y not found.'
+              errorName: NOT_FOUND_USER_BRAND
+              internalCode: 404UM
+              shortMessage: NOT_FOUND_USER_BRAND
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: Updates a user-brands.
+      operationId: updateUserBrandsById
+      summary: Updates a user-brands.
+  /recurring-payments/{id}:
+    get:
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: >-
+            Id of the recurring payment we want to search. Length : 36
+            characters.
+          in: path
+          name: id
+          required: true
+          type: string
+          x-example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+      responses:
+        '200':
+          description: The process finished correctly.
+          schema:
+            $ref: '#/definitions/_MaskedRecPayment2'
+        '403':
+          description: The recurring payment is not associated with your user id.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        404:
+          description: The recurring payment with the given id does not exist.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'Recurring payment with id : X not found.'
+              errorName: NOT_FOUND_RECURRING_PAYMENT
+              internalCode: 404RP
+              shortMessage: NOT_FOUND_RECURRING_PAYMENT.
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: Gets the recurring payment associated to the id.
+      operationId: getRecurringPaymentById
+      summary: Gets the subscription entity associated to its given id.
+    patch:
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/_PatchRecurringPaymentConfigItem'
+        - description: >-
+            Id of the recurring payment we want to search. Length : 36
+            characters.
+          in: path
+          name: id
+          required: true
+          type: string
+          x-example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+      responses:
+        '204':
+          description: The process finished correctly.
+        '403':
+          description: The recurring payment is not associated with your user id.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        404:
+          description: The recurring payment with the given id does not exist.
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'Recurring payment with id : X not found.'
+              errorName: NOT_FOUND_RECURRING_PAYMENT
+              internalCode: 404RP
+              shortMessage: NOT_FOUND_RECURRING_PAYMENT.
+              status: '404'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Recurring Payment
+      description: >-
+        Updates the subscription entity with the given Id with the subscription
+        details given in the request.
+      operationId: updateSubscriptionById
+      summary: Updates the subscription entity.
+  /regular_payments:
+    get:
+      description: >-
+        Gets a list of regular payments with their accumulated spent amount for
+        the last 12 months
+      operationId: getRPLast12MonthsAmounts
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_AnnualRegularPaymentItem'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets a list of regular payments
+      tags:
+        - Regular Payments
+  /regular_payments/by_type:
+    get:
+      description: >-
+        Gets annual expenses and number of transactions for subscriptions and
+        direct debits
+      operationId: getRPByType
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_GeneralInfoRP'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets information for regular payments grouped by type
+      tags:
+        - Regular Payments
+  /regular_payments/current_month:
+    get:
+      description: Gets regular payments for current month
+      operationId: getRPCurrentMonth
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RegularPaymentsByType'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets regular payments for current month
+      tags:
+        - Regular Payments
+  /regular_payments/current_month/cards:
+    get:
+      description: >-
+        Gets a list of regular payments with their corresponding payment method
+        information
+      operationId: getCurrentMonthCards
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RPWithPaymentMethod'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: >-
+        Gets a list of regular payments with their corresponding payment method
+        information
+      tags:
+        - Regular Payments
+  /regular_payments/current_month/payment_method:
+    get:
+      description: Gets regular payments for current month grouped by payment method
+      operationId: getRPCurrentMonthByPaymentMethod
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_PaymentMethod'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets regular payments for current month grouped by payment method
+      tags:
+        - Regular Payments
+  /regular_payments/current_month/total_cards:
+    get:
+      description: >-
+        Gets number of credit cards with transactions in the current month. If
+        there has been no usage yet, number will be 0
+      operationId: getTotalCards
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_TotalCards'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets number of credit cards with regular payments in the current month
+      tags:
+        - Regular Payments
+  /regular_payments/summary:
+    get:
+      description: >-
+        Gets regular payments for current month, monthly expenses and difference
+        with previous month
+      operationId: getSummary
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RegularPaymentsSummary'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets regular payments for current month
+      tags:
+        - Regular Payments
+  /regular_payments/{id}:
+    get:
+      description: Gets regular payment details for the given id
+      operationId: getRegularPaymentDetails
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Id of the regular payment
+          format: uuid
+          in: path
+          name: id
+          required: true
+          type: string
+          x-example: 123e4567-e89b-12d3-a456-426614174000
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RegularPaymentDetails'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets regular payment details for the given id
+      tags:
+        - Regular Payments
+  /regular_payments/{id}/expenses:
+    get:
+      description: Gets monthly expenses amounts for regular payment given by id
+      operationId: getRPMonthlyTransactions
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Id of the regular payment
+          format: uuid
+          in: path
+          name: id
+          required: true
+          type: string
+          x-example: 123e4567-e89b-12d3-a456-426614174000
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RPMonthlyTransaction'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets monthly expenses amounts for regular payment given by id
+      tags:
+        - Regular Payments
+  /regular_payments/{id}/transactions:
+    get:
+      description: >-
+        Gets transactions list for the given regular payment id ordered by most
+        recent transaction date
+      operationId: getRPTransactions
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Id of the regular payment
+          format: uuid
+          in: path
+          name: id
+          required: true
+          type: string
+          x-example: 123e4567-e89b-12d3-a456-426614174000
+        - description: Bottom date range limit
+          format: date
+          in: query
+          name: dateFrom
+          required: false
+          type: string
+          x-example: '2022-05-01'
+        - description: Top date range limit
+          format: date
+          in: query
+          name: dateTo
+          required: false
+          type: string
+          x-example: '2022-05-31'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The process finished correctly
+          schema:
+            $ref: '#/definitions/_RPTransaction'
+        '400':
+          description: Bad request
+          examples:
+            application/json:
+              code: BAD_REQUEST
+              description: The param given does not follow the proper schema
+              level: ERROR
+              message: Invalid param format.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '404':
+          description: Not Found
+          examples:
+            application/json:
+              code: NOT_FOUND
+              description: The object with given id was not found
+              level: ERROR
+              message: Object not found.
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: Unsupported MediaType
+          examples:
+            application/json:
+              code: UNSUPPORTED_MEDIA_TYPE
+              description: The specified content type is not supported for this endpoint
+              level: ERROR
+              message: Content type not supported
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              code: INTERNAL_SERVER_ERROR
+              description: Unexpected error occured
+              level: ERROR
+              message: Something went wrong
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '503':
+          description: Service Unavailable
+          examples:
+            application/json:
+              code: SERVICE_UNAVAILABLE
+              description: Requested service is temporary unavailable
+              level: ERROR
+              message: Out of service
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      summary: Gets transactions list for the given regular payment id
+      tags:
+        - Regular Payments
+  /notifications:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - description: Filter by page (paging)
+          format: int32
+          in: query
+          name: offset
+          required: false
+          type: integer
+          x-example: 3
+        - description: Specify number of elements per page (paging)
+          format: int32
+          in: query
+          name: limit
+          required: false
+          type: integer
+          x-example: 5
+        - description: Field to sort
+          in: query
+          name: sort
+          required: false
+          type: string
+          x-example: Transaction.postDate
+        - description: Direction to sort
+          in: query
+          name: dir
+          required: false
+          type: string
+          x-example: desc
+        - description: Filter if readed
+          in: query
+          name: read
+          required: false
+          type: boolean
+          x-example: false
+      responses:
+        '204':
+          description: ' Get the notifications of a user'
+          schema:
+            $ref: '#/definitions/_ResponsePaginatedNotificationModel'
+      tags:
+        - Notifications
+      description: Call to get the notifications of a user
+      operationId: getNotifications
+      summary: Gets the notifications
+    patch:
+      parameters: []
+      responses:
+        '204':
+          description: The notifications of the user merchants is marked as readed
+      tags:
+        - Notifications
+      description: Updates the list of notifications on user_merchants
+      operationId: readAllNotifications
+      summary: Mark all notifications as readed
+  /notifications/feedback:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/_FeedbackErrorModel'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/_UserFeedbackEntity'
+        '400':
+          description: Arguments not valid
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Invalid value for one of the data given.
+              errorName: BAD_REQUEST
+              internalCode: '400'
+              shortMessage: BAD_REQUEST
+              status: '400'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '401':
+          description: Unauthorized
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: 'Token Validation Unsuccessful: Unauthorized.'
+              errorName: UNAUTHORIZED
+              internalCode: '401'
+              shortMessage: UNAUTHORIZED
+              status: '401'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '405':
+          description: Method not allowed
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Forbidden.
+              errorName: METHOD_NOT_ALLOWED
+              internalCode: '405'
+              shortMessage: FORBIDDEN
+              status: '405'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '406':
+          description: MediaType not acceptable
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Forbidden.
+              errorName: MEDIATYPE_NOT_ACCEPTABLE
+              internalCode: '406'
+              shortMessage: FORBIDDEN
+              status: '406'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+        '415':
+          description: MediaType not supported
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Forbidden.
+              errorName: MEDIATYPE_NOT_SUPPORTED
+              internalCode: '415'
+              shortMessage: FORBIDDEN
+              status: '415'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Notifications
+      description: Save user feedback error in DB.
+      operationId: saveFeedbackError
+      summary: Receive feedback of an error.
+  /notifications/{notification_id}:
+    patch:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/language'
+        - $ref: '#/parameters/accept-language'
+        - $ref: '#/parameters/device-information'
+        - $ref: '#/parameters/santander-client-id'
+        - $ref: '#/parameters/content-type'
+        - $ref: '#/parameters/accept'
+        - $ref: '#/parameters/x-ibm-client-id'
+        - $ref: '#/parameters/x-b3-traceid'
+        - $ref: '#/parameters/x-b3-parentspanid'
+        - $ref: '#/parameters/x-b3-spanid'
+        - $ref: '#/parameters/x-b3-sampled'
+        - $ref: '#/parameters/x-santander-audit'
+        - $ref: '#/parameters/trusted-device-app-id'
+        - $ref: '#/parameters/santander-cipher-type'
+        - $ref: '#/parameters/santander-cipher-seed'
+        - $ref: '#/parameters/trusted-device-time'
+        - $ref: '#/parameters/trusted-device-params'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/_UpdateNotificationRequest'
+        - in: path
+          name: notification_id
+          required: true
+          type: string
+          x-example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+      responses:
+        '204':
+          description: The notifications have been updated
+        '403':
+          description: The request is denied because is forbbiden
+          examples:
+            application/json:
+              appName: Sandoku
+              detailedMessage: Forbidden.
+              errorName: FORBIDDEN
+              internalCode: '403'
+              shortMessage: FORBIDDEN
+              status: '403'
+              timeStamp: '2020-11-25T09:37:54.308Z'
+          schema:
+            $ref: '#/definitions/_ErrorDetails'
+      tags:
+        - Notifications
+      description: Updates a single notification by id
+      operationId: updateNotification
+      summary: Mark a notification as read
+
+definitions:
+  _BrandExpense:
+    properties:
+      accumulated:
+        type: boolean
+      amount:
+        description: Amount of cash that had been spend on this brand.
+        example: -130.6
+        format: float
+        type: number
+      annualAmount:
+        description: How much had been spend on this brand per year.
+        example: -110.4
+        format: float
+        type: number
+      average:
+        description: >-
+          If the recurring payment is an average or not. Is only used in
+          recurring payments.
+        example: false
+        type: boolean
+      currency:
+        description: The kind of currency used by the user.
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      monthlyAmount:
+        description: How much had been spend on this brand per month.
+        example: -35.6
+        format: float
+        type: number
+      periodicityAmount:
+        description: Duration of months that took or is taking the recurring payment.
+        example: 2
+        format: int32
+        type: integer
+      periodicityUnitEnum:
+        description: Is the measure unit. Error of correlation with the periodicityAmount.
+        example: DAYS
+        type: string
+      priority:
+        description: It is the importance of the brand over other brands.
+        example: 3
+        format: int32
+        type: integer
+      timeGapWord:
+        description: Express with a word the time of the plan.
+        enum:
+          - MONTHLY
+          - ANNUAL
+          - BIMONTHLY
+          - BIANNUAL
+          - TRIANNUAL
+        example: MONTHLY
+        type: string
+      userBrandBrandName:
+        description: Name of the brand.
+        example: Apple
+        type: string
+      userBrandBudgetAmount:
+        description: Limit spend set by the user for this brand.
+        example: -50.5
+        format: float
+        type: number
+      userBrandBudgetPercentage:
+        description: Limit spend set by the user for this brand on percentage mode.
+        example: 30
+        format: int32
+        type: integer
+      userBrandCategory:
+        description: The kind of work done by the brand.
+        example: Comercios y tiendas
+        maxLength: 255
+        type: string
+      userBrandEnabled:
+        description: >-
+          If a special configuration between the brand and the user is
+          establish.
+        example: false
+        type: boolean
+      userBrandImageUrl:
+        description: Path of the image associated to the brand.
+        example: assets/images/brands/APPLE.PNG
+        maxLength: 255
+        type: string
+      userBrandUserId:
+        description: Id of the user.
+        example: F62098302
+        maxLength: 36
+        type: string
+      weeklyAmount:
+        description: How much had been spend on this brand per week.
+        example: -15.5
+        format: float
+        type: number
+    type: object
+  _ErrorDetails:
+    properties:
+      appName:
+        type: string
+      detailedMessage:
+        type: string
+      errorName:
+        enum:
+          - BAD_REQUEST
+          - UNAUTHORIZED
+          - UNAUTHORIZED_NO_MVP
+          - UNAUTHORIZED_REGKEY_INVALID
+          - UNAUTHORIZED_BAD_CREDENTIALS
+          - UNAUTHORIZED_TOKEN_EXPIRED
+          - FORBIDDEN
+          - NOT_FOUND
+          - NOT_FOUND_USER
+          - NOT_FOUND_TC
+          - NOT_FOUND_FAQ
+          - NOT_FOUND_PHONE
+          - NOT_FOUND_RECURRING_PAYMENT
+          - NOT_FOUND_CARD
+          - NOT_FOUND_ACCOUNT
+          - NOT_FOUND_CATEGORY
+          - NOT_FOUND_USER_BRAND
+          - NOT_FOUND_DATASOURCE
+          - NOT_FOUND_LOYALTYSOURCE
+          - NOT_FOUND_USER_DATASOURCE
+          - NOT_FOUND_BRAND_IN_YUDONPAY
+          - NOT_FOUND_PLAN
+          - NOT_FOUND_NOTIFICATION
+          - NOT_FOUND_BRAND
+          - NOT_ACCEPTABLE
+          - CONFLICT
+          - CONFLICT_YDP_POINT_ALREADY_EXISTS
+          - CONFLICT_USER_ALREADY_EXISTS
+          - CONFLICT_PHONE_ALREADY_EXISTS
+          - CONFLICT_OTP_WAIT_TIME
+          - CONFLICT_OTP_ATTEMPTS_EXCEEDED
+          - CONFLICT_OTP_EXPIRED
+          - CONFLICT_OTP_INVALID
+          - INTERNAL
+          - SERVICE_UNAVAILABLE
+        type: string
+      internalCode:
+        format: int32
+        type: integer
+      shortMessage:
+        type: string
+      status:
+        format: int32
+        type: integer
+      timeStamp:
+        format: date-time
+        type: string
+    type: object
+  _EvolutionCategory:
+    description: List of categories associated to this element.
+    properties:
+      categoryName:
+        description: Category of the brands.
+        example: Comercios y tiendas
+        type: string
+      currency:
+        description: The kind of currency used by the user.
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      expected:
+        description: >-
+          How much is expected to be spend on this category during the filter
+          month.
+        example: -20.5
+        format: float
+        type: number
+      paid:
+        description: How much have been spend on this category during the filter month.
+        example: -15.2
+        format: float
+        type: number
+    type: object
+  _EvolutionElement:
+    description: List of evolution elements associated to this response.
+    properties:
+      categories:
+        description: List of categories associated to this element.
+        items:
+          $ref: '#/definitions/_EvolutionCategory'
+        type: array
+      date:
+        description: Month of the year that we want to filter.
+        format: int64
+        pattern: yyyy-MM
+        type: integer
+    type: object
+  _EvolutionResponse:
+    properties:
+      evolution:
+        description: List of evolution elements associated to this response.
+        items:
+          $ref: '#/definitions/_EvolutionElement'
+        type: array
+    type: object
+  _MaskedAccount2:
+    properties:
+      bankCode:
+        description: Code of the bank entity or branch office.
+        example: BBVAESMMXXX
+        maxLength: 255
+        type: string
+      ccc:
+        description: >-
+          Code use for identify the account of the user by the bank. Sometimes
+          can be that it come masked.
+        example: '9898926020014830'
+        maxLength: 255
+        type: string
+      id:
+        description: Id of the bank account.
+        example: 3ddf3443-2d7b-4b90-9a1d-f2114522bc90
+        maxLength: 36
+        type: string
+      uniquePaymentAsset:
+        description: If the recurring payments is taken using more than one credit card.
+        example: false
+        type: boolean
+    type: object
+  _MaskedCard2:
+    properties:
+      account:
+        description: Id of the bank account.
+        example: '9898926020014830'
+        maxLength: 255
+        type: string
+      cardType:
+        description: 'The kind of card, if it is debit or credit.'
+        enum:
+          - CR
+          - DE
+        example: CR
+        type: string
+      expirationDate:
+        description: Date of expiration of the credit card of the user.
+        format: date-time
+        pattern: MM/yy
+        type: string
+      holder:
+        description: The owner of the credit card.
+        example: HOLDER
+        type: string
+      id:
+        description: Id of the card.
+        example: a82c614e-f150-40c3-b274-a04b0580e183
+        maxLength: 36
+        type: string
+      imgCode:
+        description: >-
+          It is the code used for generate the image. It is the same as the
+          CARD_ALIAS.
+        example: 049432
+        maxLength: 255
+        type: string
+      maskedPan:
+        description: The pan of the card that later is going to be masked.
+        example: '10830835930792414'
+        type: string
+      uniquePaymentAsset:
+        description: >-
+          If is related with a payment_asset object that contain the relation of
+          the bank, card and user id.
+        example: false
+        type: boolean
+    type: object
+  _MaskedRecPayment2:
+    properties:
+      active:
+        description: 'If the recurring payment is working, have to be done again or not.'
+        example: false
+        type: boolean
+      annualAmount:
+        description: How much had been spend on this recurring payment per year.
+        format: float
+        type: number
+      average:
+        description: >-
+          The average of the total spent in recurring payments for a brand.
+          Important : Can only be true if is a RECURRING_PAYMENT.
+        example: false
+        type: boolean
+      contractRef:
+        description: >-
+          The code of the contract for know if two recurring payments are
+          related.
+        maxLength: 64
+        type: string
+      cost:
+        description: Cost of the recurring payment.
+        example: -4.99
+        format: float
+        type: number
+      currency:
+        description: The kind of currency used by the user.
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      durationAmount:
+        description: Duration of months that took or is taking the recurring payment.
+        example: 2
+        format: int32
+        type: integer
+      durationType:
+        description: Is the measure unit. Error of correlation with the periodicityAmount.
+        example: DAYS
+        type: string
+      feedbackPlan:
+        description: The plan selected by the user for the recurring payment.
+        example: Id of the feedback plan
+        maxLength: 255
+        type: string
+      id:
+        description: Id of the recurring payment.
+        example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+        maxLength: 36
+        type: string
+      lastRenewTime:
+        description: Last time that was done the recurring payment.
+        format: int64
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: integer
+      monthlyAmount:
+        description: How much had been spend on this recurring payment per month.
+        format: float
+        type: number
+      note:
+        description: Note that you can leave on a Recurring Payment.
+        example: This is a try!
+        maxLength: 255
+        type: string
+      paymentMethod:
+        description: The type of payment used by the user.
+        enum:
+          - GLOBAL
+          - The pan of the user
+          - The bank code + the ccc of the user
+        example: GLOBAL
+        type: string
+      startTime:
+        description: Day of start of the recurring payment.
+        format: int64
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: integer
+      timeGapWord:
+        description: >-
+          Related with the duration-amount, on this case it is presented with a
+          word.
+        enum:
+          - MONTHLY
+          - ANNUAL
+          - BIMONTHLY
+          - BIANNUAL
+          - TRIANNUAL
+        example: MONTHLY
+        type: string
+      type:
+        description: The kind of payment.
+        enum:
+          - SUBSCRIPTION
+          - YEAR_AVERAGE
+          - RECURRENT_PAYMENT
+        example: SUBSCRIPTION
+        type: string
+      userBrand:
+        $ref: '#/definitions/_UserBrandModel'
+      userPlan:
+        $ref: '#/definitions/_UserPlanModel'
+      userRp:
+        description: >-
+          If the payment method in the recurring payments is ignored for the
+          aggregation process
+        example: false
+        type: boolean
+      weeklyAmount:
+        description: How much had been spend on this recurring payment per week.
+        format: float
+        type: number
+    type: object
+  _MaskedTransaction2:
+    properties:
+      account:
+        $ref: '#/definitions/_MaskedAccount2'
+      amount:
+        description: Amount of money move on the transaction.
+        example: -9.99
+        format: float
+        type: number
+      card:
+        $ref: '#/definitions/_MaskedCard2'
+      currency:
+        description: The kind of currency used by the user.
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      description:
+        description: Information about the transaction.
+        example: COMPRA INTERNACIONAL EUROGOOGLE Google StorageLondon
+        type: string
+      id:
+        description: Id of the transaction.
+        example: f6fbbec4-6147-4227-a617-3df82db886cc
+        maxLength: 36
+        type: string
+      postDate:
+        description: Date that was done the transaction.
+        format: int64
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: integer
+      predicted:
+        description: If it is an intuition of the system of future payments.
+        example: false
+        type: boolean
+    type: object
+  _Pageable:
+    properties:
+      offset:
+        format: int64
+        type: integer
+      pageNumber:
+        format: int32
+        type: integer
+      pageSize:
+        format: int32
+        type: integer
+      paged:
+        type: boolean
+      sort:
+        $ref: '#/definitions/_Sort'
+      unpaged:
+        type: boolean
+    type: object
+  _PatchRecurringPaymentConfigItem:
+    properties:
+      id:
+        description: Id of the recurring payment.
+        example: 36bf9548-2cf1-4e7c-a757-69493c6ca112
+        maxLength: 36
+        type: string
+      note:
+        description: Note that you can leave on a Recurring Payment.
+        example: This is a try!
+        maxLength: 255
+        type: string
+    type: object
+  _PatchRecurringPaymentsConfigRequest:
+    properties:
+      recurringPayments:
+        description: List of recurringPaymentConfig items.
+        items:
+          $ref: '#/definitions/_PatchRecurringPaymentConfigItem'
+        type: array
+    required:
+      - recurringPayments
+    type: object
+  _PatchUserBrandItem:
+    description: List of userBrands items
+    properties:
+      brandName:
+        description: Name of the brand that we are going to associated with the user.
+        example: Apple
+        maxLength: 255
+        type: string
+      budgetPercentage:
+        description: Limit spend set by the user for this brand on percentage mode.
+        example: 30
+        format: int32
+        type: integer
+      enabled:
+        description: If the user have enabled a special configuration for the brand.
+        example: false
+        type: boolean
+    type: object
+  _PatchUserBrandRequest:
+    properties:
+      userBrands:
+        description: List of userBrands items
+        items:
+          $ref: '#/definitions/_PatchUserBrandItem'
+        type: array
+    required:
+      - userBrands
+    type: object
+  _PatchUserBrandsResponse:
+    properties:
+      userBrandBrandName:
+        description: Name of the brand associated with the userBrand object.
+        example: Apple
+        maxLength: 255
+        type: string
+      userBrandBudgetAmount:
+        description: Maximum amount of money the user want to spend on this brand.
+        example: -75.5
+        format: float
+        type: number
+      userBrandUserId:
+        description: Id of the user associated with the userBrand object.
+        example: F41844470
+        maxLength: 36
+        type: string
+    type: object
+  _ResponsePaginatedBrandExpenses:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_BrandExpense'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  _ResponsePaginatedMaskedAccount2:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_MaskedAccount2'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  _ResponsePaginatedMaskedCard2:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_MaskedCard2'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  ResponsePaginatedMaskedRecPayment2:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_MaskedRecPayment2'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  _ResponsePaginatedMaskedTransaction2:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_MaskedTransaction2'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  _Sort:
+    properties:
+      empty:
+        type: boolean
+      sorted:
+        type: boolean
+      unsorted:
+        type: boolean
+    type: object
+  _UserBrandIdModel:
+    description: Object with the information of the user and the brand.
+    properties:
+      name:
+        description: Name of the brand associated with the recurring payment.
+        example: Apple
+        type: string
+      userId:
+        description: Id of the user associated with the recurring payment.
+        example: F62098302
+        maxLength: 36
+        type: string
+    type: object
+  _UserBrandModel:
+    description: Object with information of the brand.
+    properties:
+      categoryName:
+        description: The kind of work done by the brand.
+        example: Comercios y tiendas
+        maxLength: 255
+        type: string
+      countryCode:
+        description: Code of the country.
+        example: ES
+        type: string
+      domain:
+        description: Domain of the website for the brand.
+        example: 'https://www.amazon.es/'
+        type: string
+      imageUrl:
+        description: Path of the image associated to the brand.
+        example: assets/images/brands/APPLE.PNG
+        maxLength: 255
+        type: string
+      timeCreated:
+        description: Day and hour that was created the recurring payment.
+        format: int64
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: integer
+      userBrandId:
+        $ref: '#/definitions/_UserBrandIdModel'
+    type: object
+  _UserPlanIdModel:
+    description: 'Object with the information of the user, brand and cost.'
+    properties:
+      cost:
+        description: The price of the plan.
+        example: -132.82
+        format: float
+        type: number
+      name:
+        description: The plan of the brand selected by the user.
+        example: Apple Music Student
+        type: string
+      timeGapWord:
+        description: Express with a word the time of the plan.
+        enum:
+          - MONTHLY
+          - ANNUAL
+          - BIMONTHLY
+          - BIANNUAL
+          - TRIANNUAL
+        example: MONTHLY
+        type: string
+      userId:
+        description: The id of the user associated with the plan.
+        example: F62098302
+        maxLength: 36
+        type: string
+    type: object
+  _UserPlanModel:
+    description: Object with the information of the plan of the brand selected by the user.
+    properties:
+      currency:
+        description: The kind of currency used by the user.
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      durationAmount:
+        description: Duration of months that took or is taking the recurring payment.
+        example: 2
+        format: int32
+        type: integer
+      durationType:
+        description: Is the measure unit. Error of correlation with the periodicityAmount.
+        example: DAYS
+        type: string
+      obsolete:
+        type: boolean
+      timeObsolete:
+        description: Date since the plan selected by the user is finish (obsolete).
+        format: int64
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: integer
+      userPlanId:
+        $ref: '#/definitions/_UserPlanIdModel'
+    type: object
+  _FeedbackErrorModel:
+    description: User identification and description of the error
+    properties:
+      description:
+        description: Description of the error
+        example: The app does not show any recurring payment in my profile
+        type: string
+    required:
+      - description
+    type: object
+  _NotificationModel:
+    properties:
+      amount:
+        description: It contains the amount of the notifications sent
+        example: -127.08
+        format: float
+        type: number
+      average:
+        description: If the recurring payment is an average or not.
+        example: false
+        type: boolean
+      bankCardId:
+        description: It is the identification of a card on the bank
+        example: '10830835930792414'
+        type: string
+      brandName:
+        description: It is the name of the brand that send notifications
+        example: LIDL
+        type: string
+      cardExpirationDate:
+        description: It is the date when the card is going to be expired
+        format: date-time
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: string
+      cardId:
+        description: This variable contains the card identification
+        example: a82c614e-f150-40c3-b274-a04b0580e183
+        maxLength: 36
+        type: string
+      createTime:
+        description: It is the date of creation a notification
+        format: date-time
+        type: string
+      currency:
+        description: It is the currency to pay the notification
+        example: EUR
+        properties:
+          currencyCode:
+            type: string
+          defaultFractionDigits:
+            format: int32
+            type: integer
+          displayName:
+            type: string
+          numericCode:
+            format: int32
+            type: integer
+          numericCodeAsString:
+            type: string
+          symbol:
+            type: string
+        type: object
+      currentIntervalAmount:
+        description: It contains the interval amount of notifications sent on the present
+        example: 3.5
+        format: float
+        type: number
+      durationAmount:
+        description: It is the duration of the amount to the brand
+        example: 12
+        format: int32
+        type: integer
+      lastSentTime:
+        description: It has the last time that sent a notification
+        format: date-time
+        pattern: 'yyyy-MM-dd HH:mm:ss'
+        type: string
+      maskedPan:
+        description: It is pan masked of the card where send the notifications
+        example: '10978038468963008'
+        type: string
+      readed:
+        description: It contains if a notification have been readed or not
+        example: false
+        type: boolean
+      sentCount:
+        description: It contains the number of sent notifications
+        example: 20
+        format: int32
+        type: integer
+      system-uuid:
+        description: It is the identificator of a notification
+        example: 49838755-0486-4d5c-aa14-a948f7d5f0f6
+        maxLength: 36
+        type: string
+      timeGapWord:
+        description: It is the name of the brand that send notifications
+        enum:
+          - MONTHLY
+          - ANNUAL
+          - BIMONTHLY
+          - BIANNUAL
+          - TRIANNUAL
+        example: MONTHLY
+        maxLength: 32
+        type: string
+      type:
+        description: It is the type of a notification
+        example: NEW_BRAND
+        maxLength: 50
+        minLength: 0
+        type: string
+      userIdto:
+        description: It is the identificator of a user
+        example: F41844470
+        maxLength: 36
+        type: string
+    type: object
+  _ResponsePaginatedNotificationModel:
+    properties:
+      first:
+        type: boolean
+      last:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/_NotificationModel'
+        type: array
+      number:
+        format: int32
+        type: integer
+      numberOfElements:
+        format: int32
+        type: integer
+      pageable:
+        $ref: '#/definitions/_Pageable'
+      size:
+        format: int32
+        type: integer
+      sort:
+        $ref: '#/definitions/_Sort'
+      totalElements:
+        format: int64
+        type: integer
+      totalPages:
+        format: int32
+        type: integer
+    type: object
+  _UpdateNotificationRequest:
+    description: Request to update the notifications
+    properties:
+      id:
+        description: The id of the notification
+        type: string
+      read:
+        description: Set notification read
+        example: true
+        type: boolean
+    required:
+      - read
+    type: object
+  _UserFeedbackEntity:
+    properties:
+      createTime:
+        description: It is the date of creation a notification
+        format: date-time
+        type: string
+      description:
+        maxLength: 255
+        minLength: 0
+        type: string
+      id:
+        type: string
+      userId:
+        type: string
+    type: object
+  _AnnualRegularPaymentItem:
+    example:
+      - annualAmount: 123.33
+        brandName: AMAZON
+        id: 17142210-75d3-41f3-9734-f68012188cd7
+        periodicity: ANNUAL
+        type: SUBSCRIPTION
+      - annualAmount: 17.89
+        brandName: NETFLIX
+        cancellationUrl: www.netflix.com
+        id: 17142210-75d3-41f3-9734-f68012188999
+        nextPayment: 4
+        periodicity: MONTHLY
+        type: DIRECT_DEBIT
+    properties:
+      annualAmount:
+        description: Regular payment annual expense amount
+        type: number
+      brandName:
+        description: Regular payment brand name
+        type: string
+      cancellationUrl:
+        description: >-
+          Cancellation URL for the subscription if it is less than 7 days left
+          for the next payment (nextPayment not null)
+        type: string
+      id:
+        description: Regular payment id
+        type: string
+      nextPayment:
+        description: >-
+          Number of days left, in case of subscriptions, if it is less than 7
+          days left for the next payment
+        type: integer
+      periodicity:
+        description: Regular payment periodicity
+        type: string
+      type:
+        description: Regular payment type
+        type: string
+    type: object
+
+  _GeneralInfoRP:
+    example:
+      - totalAmount: 1276
+        totalTransactions: 123
+        type: SUBSCRIPTION
+      - totalAmount: 126
+        totalTransactions: 17
+        type: DIRECT_DEBIT
+    properties:
+      totalAmount:
+        description: Total sum of transactions expenses
+        type: number
+      totalTransactions:
+        description: Total number of transactions
+        type: number
+      type:
+        description: Regular payment type
+        type: string
+    type: object
+
+  _RegularPaymentsByType:
+    example:
+      - regularPayments:
+          - amount: 23.56
+            brandName: AMAZON
+            id: 123e4567-e89b-12d3-a456-426614174000
+            periodicity: ANNUAL
+          - amount: 56.78
+            brandName: NETFLIX
+            id: 123e4567-e89b-12d3-a456-426614174001
+            periodicity: MONTHLY
+        type: SUBSCRIPTIONS and DIRECT_DEBIT
+      - regularPayments:
+          - amount: 23.56
+            brandName: MERCADONA
+            id: 123e4567-e89b-12d3-a456-426614174002
+          - amount: 56.78
+            brandName: UBER
+            id: 123e4567-e89b-12d3-a456-426614174003
+        type: Regular Retailers
+    properties:
+      regularPayments:
+        description: The list of products identifier to offer to the client
+        items:
+          additionalProperties:
+            $ref: '#/definitions/_SimpleRegularPayment'
+          description: Regular payment brand name with its corresponding monthly amount
+          type: object
+        type: array
+      type:
+        description: Regular payment type
+        type: string
+    type: object
+
+  _SimpleRegularPayment:
+    example:
+      - amount: 80.9
+        brandName: AMAZON
+        id: 123e4567-e89b-12d3-a456-426614174000
+      - amount: 17.54
+        brandName: NETFLIX
+        id: 123e4567-e89b-12d3-a456-426614174001
+        periodicity: MONTHLY
+    properties:
+      amount:
+        description: Total monthly expenses amount for the corresponding brand.
+        type: number
+      brandName:
+        description: Regular payment brand name
+        type: string
+      id:
+        description: Regular payment id
+        type: string
+      periodicity:
+        description: Regular payment periodicity when it is a subscription
+        type: string
+    type: object
+
+  _RPWithPaymentMethod:
+    example:
+      - brandName: NETFLIX
+        lastPaymentDate: '2022-05-15 17:25:00'
+        paymentMethods:
+          - maskedId: '****2232'
+      - brandName: AMAZON
+        lastPaymentDate: '2022-05-01 12:45:00'
+        paymentMethods:
+          - maskedId: '****6755'
+          - maskedId: '****2232'
+    properties:
+      brandName:
+        description: Regular payment brand name
+        type: string
+      lastPaymentDate:
+        description: Date when the last transaction of this regular payment was done
+        format: date
+        type: string
+      paymentMethods:
+        description: list of payment methods used for this regular payment
+        items:
+          properties:
+            maskedId:
+              description: Payment method masked pan or iban
+              type: string
+          type: object
+        type: array
+    type: object
+
+  _PaymentMethod:
+    example:
+      - maskedId: '****8889'
+        regularPayments:
+          - amount: 23.56
+            brandName: AMAZON
+          - amount: 56.78
+            brandName: NETFLIX
+        type: Card
+      - maskedId: '****4565'
+        regularPayments:
+          - amount: 9.99
+            brandName: PLAYSTATION
+          - amount: 12.34
+            brandName: DELIVEROO
+          - amount: 78.9
+            brandName: UBER
+        type: Account
+    properties:
+      maskedId:
+        description: Account IBAN or card pan masked.
+        type: string
+      regularPayments:
+        description: The list of products identifier to offer to the client.
+        items:
+          additionalProperties:
+            $ref: '#/definitions/_SimpleRegularPayment'
+          description: Regular payment brand name
+          type: object
+        type: array
+      type:
+        description: 'Type of payment method (Account, Card...)'
+        type: string
+    type: object
+  _TotalCards:
+    properties:
+      total:
+        description: Total cards used this month
+        example: 2
+        type: integer
+    type: object
+  _RegularPaymentsSummary:
+    properties:
+      annualAmmount:
+        description: Total sum of current year transactions expenses
+        example: -242.21
+        type: number
+      monthlyAmount:
+        description: Total sum of current month transactions expenses
+        example: 20.34
+        type: number
+      regularPayments:
+        description: The list of products identifier to offer to the client
+        example:
+          - amount: 23.56
+            brandName: AMAZON
+          - amount: 56.78
+            brandName: NETFLIX
+        items:
+          additionalProperties:
+            $ref: '#/definitions/_SimpleRegularPayment'
+          description: Regular payment brand name with its corresponding monthly amount
+          type: object
+        type: array
+    type: object
+
+  _RegularPaymentDetails:
+    properties:
+      brandName:
+        description: Regular payment brand name
+        example: AMAZON
+        type: string
+      cancellationUrl:
+        description: Cancellation URL for the plan
+        example: www.amazon.com
+        type: string
+      currentMonthAmount:
+        description: Total current month expenses amount.
+        example: 132.43
+        type: number
+      currentYearAmount:
+        description: Total current year expenses amount.
+        example: 4678.95
+        type: number
+      firstPayment:
+        description: Date when the regular payment began
+        example: '2020-05-01 00:00:00'
+        format: date
+        type: string
+      nextExpectedPayment:
+        description: Expected date for the next charge
+        example: '2022-05-01 00:00:00'
+        format: date
+        type: string
+      paymentMethods:
+        description: The list of payment methods used for the regular payment.
+        example:
+          - '****8889'
+          - '****6789'
+        items:
+          description: Specific payment method
+          type: string
+        type: array
+      periodicity:
+        description: Regular payment periodicity period
+        example: MONTHLY
+        type: string
+      planName:
+        description: Regular payment plan name
+        example: Amazon Premium
+        type: string
+      type:
+        description: Regular payment type
+        example: SUBSCRIPTION
+        type: string
+    type: object
+  _RPMonthlyTransaction:
+    example:
+      - amount: 80.9
+        month: JAN
+      - amount: 56.9
+        month: FEB
+      - amount: 60
+        month: MAR
+      - amount: 23.45
+        month: APR
+      - amount: 178
+        month: MAY
+      - amount: 43.33
+        month: JUN
+    properties:
+      amount:
+        description: Total expenses amount for the month associated
+        type: number
+      month:
+        description: Month for the corresponding amount
+        type: string
+    type: object
+
+  _RPTransaction:
+    example:
+      - amount: 25.45
+        description: Amazon Prime subscription May 2022
+        transactionDate: '2022-05-03 00:00:00'
+      - amount: 7.49
+        description: Netflix Estandar subscription May 2022
+        transactionDate: '2022-05-01 12:45:00'
+    properties:
+      amount:
+        description: Transaction cost
+        type: number
+      description:
+        description: Brief description for the transaction
+        type: string
+      transactionDate:
+        description: Date when the transaction was done
+        format: date
+        type: string
+    type: object
+tags:
+  - description: Controller with all the calls to work with Recurring Payment API
+    name: Recurring Payment
+  - description: Controller with all the calls to work with Notifications API
+    name: Notifications
+  - description: Service responsible for all available operations over users subscriptions
+    name: Regular Payments
+parameters:
+  authorization:
+    name: authorization
+    type: string
+    required: true
+    in: header
+    description: Field to send the access token to the API, initially OAuth and JWT.
+  language:
+    name: language
+    type: string
+    required: true
+    in: header
+    description: The server responds with the field in the header with the response language. Following the ([ISO 639-2]-[ISO 3166-1/Alpha3]) code standard.
+    x-example: Spain will be es-ESP
+  accept-language:
+    name: accept-language
+    type: string
+    required: false
+    in: header
+    description: The consumer list of languages by order of preference. Following the (([ISO 639-2]-[ISO 3166-1/Alpha3])) code standard.
+    x-example: Spain will be es-ESP
+  device-information:
+    name: device-information
+    type: string
+    required: true
+    in: header
+    description: >-
+      CHANNEL/SEGMENT FRONT_APP/VERSION DEVICE OS/OS_VERSION NETWORK_CLIENT/VERSION FRAMEWORK/VERSION
+
+      Channel: [ISO 639-2][] plus 5 custom contry digits. For
+      Segment: retail / business
+      Front_App/Version: For example OneApp/1.0
+      Device: Platform value extracted from the device. For example iPhone13
+      OS/VERSION: android / iOS / windows / linux / macOS, version is a platform value extracted from the device. For example iOS/1.0
+      Network_Client/Version: App network client and version. For example CF_Network/5.1
+      Framework/Version: For example Darwin/16.3.0
+  santander-client-id:
+    name: santander-client-id
+    type: string
+    required: true
+    in: header
+    description: The consumer application identifier for APIs. santander-client-id must be defined just as a Request header, this is not a header defined as an API Key at security definition level
+  content-type:
+    name: content-type
+    type: string
+    required: false
+    in: header
+    description: The server responds with the data format of the response. Backend expected a JSON document format.
+    x-example: application/json
+  #
+  # STANDARD HEADER
+  #
+  accept:
+    name: accept
+    type: string
+    required: false
+    in: header
+    description: The consumer request the data format of the response by order of preference.Backend expected a JSON document format.
+    x-example: application/json
+  x-ibm-client-id:
+    name: x-ibm-client-id
+    type: string
+    required: false
+    in: header
+    description: The consumer application identifier (only for IBM API Connect). Legacy. Will be reviewed in future releases.
+  #
+  # TRACK HEADERS
+  # Useful information at https://github.com/openzipkin/b3-propagation
+  #
+  x-b3-traceid:
+    name: x-b3-traceid
+    type: string
+    required: false
+    in: header
+    description: The TraceId is 64 or 128-bit in length and indicates the overall ID of the trace. Every span in a trace shares this ID
+    x-example: 463ac35c9f6413ad48485a3953bb6124
+  x-b3-parentspanid:
+    name: x-b3-parentspanid
+    type: string
+    required: false
+    in: header
+    description: The ParentSpanId is 64-bit in length and indicates the position of the parent operation in the trace tree. When the span is the root of the trace tree, there is no ParentSpanId.
+    x-example: 0020000000000001
+  x-b3-spanid:
+    name: x-b3-spanid
+    type: string
+    required: false
+    in: header
+    description: The SpanId is 64-bit in length and indicates the position of the current operation in the trace tree. The value should not be interpreted. It may or may not be derived from the value of the TraceId
+    x-example: a2fb4a1d1a96d312
+  x-b3-sampled:
+    name: x-b3-sampled
+    type: string
+    required: false
+    in: header
+    description: >-
+      Sampling is a mechanism to reduce the volume of data that ends up in the tracing system. In B3, sampling applies consistently per-trace: once the sampling decision is made, the same value should be consistently sent downstream. This means you will see all spans sharing a trace ID or none.
+
+      Accepted values are\n
+
+      * 1. Means accepted\n
+      * 0. Means denied
+
+      Before this specification was written, some tracers propagated X-B3-Sampled as true or false as opposed to 1 or 0. While you shouldn't encode x-b3-sampled as true or false, a lenient implementation may accept them
+    x-example: 1
+  #
+  # Only for UK
+  #
+  x-santander-audit:
+    name: x-santander-audit
+    type: string
+    required: false
+    in: header
+    description: Extra information coming from the client. Needed for audit purposes
+  #
+  # Only for Poland
+  #
+  trusted-device-app-id:
+    name: trusted-device-app-id
+    type: string
+    required: false
+    in: header
+    description: Device information permitted by operation for data query. Makes it possible to apply an experience base to optimize the data collection. This header is mandatory for Poland due to security reasons
+  trusted-device-time:
+    name: trusted-device-time
+    type: string
+    required: false
+    in: header
+    description: Device time formatted presenting the following the Standard Time Format pattern yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+    x-example: "2022-04-12T15:55:39.407Z"
+  trusted-device-params:
+    name: trusted-device-params
+    type: string
+    required: false
+    in: header
+    description: Contains encripted parameters from the trusted device parameter source.
+  #
+  # SECURITY HEADERS
+  #
+  santander-cipher-type:
+    name: santander-cipher-type
+    type: string
+    required: false
+    in: header
+    description: >-
+      Indicates what kind of cipher algorithmic approach will be applied to a response fields subset.
+
+      Supported values:
+      * asymmetric
+  santander-cipher-seed:
+    name: santander-cipher-seed
+    type: string
+    required: false
+    in: header
+    description: Seed value applied on both sides to encrypt/decrypt response entity fields. This field is mandatory if Santander-Cipher-Type is presented and is asymetric in the request Headers collection.
+x-components: {}
